@@ -9,6 +9,6 @@ namespace DeliverySystem.Models
     public class Product
     {
         public string ProductName { get; set; }
-        public decimal ProductPrice { get; set; }
+        //public decimal ProductPrice { get; set; }
     }
 }
