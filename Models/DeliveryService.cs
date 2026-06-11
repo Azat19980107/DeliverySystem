@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,51 @@ namespace DeliverySystem.Models
                 Id = id,
                 Name = name
             });
+
+            Console.WriteLine("Аккаунт создан");
+        }
+        public void ShowAllCustomers()
+        {
+            foreach (var customer in customers)
+            {
+                Console.WriteLine(customer);
+            }
+        }
+        public void CreateOrder ()
+        {
+            Order order = new ()
+            {
+                OrderId = orderId++,
+                CreateDate = DateTime.Now,
+                OrderStatus = OrderStatus.Created,
+
+            };
+
+            Console.WriteLine("Что хотите заказать?");
+
+            Product product = new ()
+            {
+                ProductName = Console.ReadLine()
+            };
+
+            Console.WriteLine("Выберите кол-во");
+
+            OrderItem orderItem = new ()
+            {
+                Product = product,
+                Quantity = int.Parse(Console.ReadLine())
+            };
+
+            order.OrderItems.Add(orderItem);
+
+            orders.Add(order);
+        }
+        public void ShowOrders ()
+        {
+            foreach (var order in orders)
+            {
+                Console.WriteLine(order);
+            }
         }
     }
 }
