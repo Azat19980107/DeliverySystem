@@ -25,8 +25,8 @@ public class Order
             result += product + "\n";
         }
 
-        result += $"{CourierId}\n" +
-                  $"{CustomerId}"
+        result += $"ID курьера: {CourierId}\n" +
+                  $"ID клиента: {CustomerId}"
         ;
 
         return result;

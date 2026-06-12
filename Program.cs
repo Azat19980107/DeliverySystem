@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
 using System.Runtime;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -71,13 +72,19 @@ while (true)
                         }
                     break;
 
+                    case 2:
+                        {
+                            var noCourierOrders = service.GetNoCourierOrder(service);
+                            service.ShowNoCourierOrders(noCourierOrders);
+                        }
+                    break;
                     case 3:
                         {
-                            var order = service.ShowNoCourierOrder(service);
-                            Console.WriteLine("Введите ID");
+                            Console.WriteLine("Выберите заказ");
+                            int orderId = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Введите Id");
                             int courierId = int.Parse(Console.ReadLine());
-                            var courier = service.GetCourier(service, courierId);
-                            service.AcceptOrder(order, courier);
+                            service.AcceptOrder(orderId, courierId);
                         }
                     break;
                 }

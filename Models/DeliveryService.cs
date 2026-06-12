@@ -5,6 +5,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace DeliverySystem.Models
 {
@@ -97,21 +98,28 @@ namespace DeliverySystem.Models
                 Console.WriteLine(courier);
             }
         }
-        public Order ShowNoCourierOrder(DeliveryService service)
+        public List<Order> GetNoCourierOrder(DeliveryService service)
         {
-            var noCourierOrder = orders.FirstOrDefault(order => order.CourierId == 0);
-            return noCourierOrder;
+            var noCourierOrders = service.orders.Where(order => order.CourierId == 0).ToList();
+
+            return noCourierOrders;
         }
 
-        public Courier GetCourier (DeliveryService service, int id)
+        public void ShowNoCourierOrders (List<Order> orders)
         {
-            return service.couriers.FirstOrDefault(courier => courier.Id == id);
+            foreach (var order in orders)
+            {
+                Console.WriteLine(order.OrderId);
+            }
         }
-        public void AcceptOrder (Order order, Courier courier)
+
+        public void AcceptOrder(int orderId, int courierId)
         {
-            order.CourierId = courier.Id;
-            order.OrderStatus = OrderStatus.Accepted;
+            var pickedOrder = orders.First(order => order.OrderId == orderId);
+            pickedOrder.CourierId = courierId;
+            pickedOrder.OrderStatus = OrderStatus.Accepted;
         }
+        
     }
 }
         
