@@ -73,6 +73,45 @@ namespace DeliverySystem.Models
                 Console.WriteLine(order);
             }
         }
+
+        public void CreateCourier()
+        {
+            Console.WriteLine("Введите имя");
+            string name = Console.ReadLine();
+
+            Console.WriteLine("Придумайте ID");
+            int id = int.Parse(Console.ReadLine());
+
+            couriers.Add(new Courier
+            {
+                Name = name,
+                Id = id
+            });
+
+            Console.WriteLine("Аккаунт создан");
+        }
+        public void ShowAllCouriers ()
+        {
+            foreach (var courier in couriers)
+            {
+                Console.WriteLine(courier);
+            }
+        }
+        public Order ShowNoCourierOrder(DeliveryService service)
+        {
+            var noCourierOrder = orders.FirstOrDefault(order => order.CourierId == 0);
+            return noCourierOrder;
+        }
+
+        public Courier GetCourier (DeliveryService service, int id)
+        {
+            return service.couriers.FirstOrDefault(courier => courier.Id == id);
+        }
+        public void AcceptOrder (Order order, Courier courier)
+        {
+            order.CourierId = courier.Id;
+            order.OrderStatus = OrderStatus.Accepted;
+        }
     }
 }
         

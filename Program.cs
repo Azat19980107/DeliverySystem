@@ -52,6 +52,38 @@ while (true)
             }
         break;
 
+        case 2:
+            {
+                Console.WriteLine
+                (
+                    "Cоздать аккаунт - 1\n" +
+                    "Посмотреть заказы - 2\n" +
+                    "Принять заказ - 3"
+                );
+
+                int command = int.Parse(Console.ReadLine());
+
+                switch (command)
+                {
+                    case 1:
+                        {
+                            service.CreateCourier();
+                        }
+                    break;
+
+                    case 3:
+                        {
+                            var order = service.ShowNoCourierOrder(service);
+                            Console.WriteLine("Введите ID");
+                            int courierId = int.Parse(Console.ReadLine());
+                            var courier = service.GetCourier(service, courierId);
+                            service.AcceptOrder(order, courier);
+                        }
+                    break;
+                }
+            }
+        break;
+
         case 3:
             {
                 while (true)
@@ -60,7 +92,7 @@ while (true)
                     (
                         "Выберите команду:\n" +
                         "Посмотреть всех клиентов - 1\n" +
-                        "Посмотреть всех курьеров - 1\n"
+                        "Посмотреть всех курьеров - 2\n"
                     );
 
                     int command = int.Parse(Console.ReadLine());
@@ -70,6 +102,12 @@ while (true)
                         case 1:
                             {
                                 service.ShowAllCustomers();
+                            }
+                        break;
+
+                        case 2:
+                            {
+                                service.ShowAllCouriers();
                             }
                         break;
                     }

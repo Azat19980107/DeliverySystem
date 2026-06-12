@@ -1,4 +1,4 @@
-enum OrderStatus
+public enum OrderStatus
 {
     Created,
     Accepted,

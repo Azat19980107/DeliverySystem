@@ -2,7 +2,7 @@ using DeliverySystem.Models;
 using System.Data;
 using System.Net.Http.Headers;
 
-class Order
+public class Order
 {
     public int OrderId { get; set; }
     public DateTime CreateDate { get; set; }
