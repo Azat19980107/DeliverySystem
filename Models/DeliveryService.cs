@@ -14,6 +14,74 @@ namespace DeliverySystem.Models
         List<Customer> customers = new ();
         List<Courier> couriers = new ();
         List<Order> orders = new();
+        public void CustomerMenu (DeliveryService service)
+        {
+            Console.WriteLine("Для входа введите ID");
+            int customerId = service.ReadId();
+            var foundAccount = service.FindAccount (customerId);
+
+            if (foundAccount != null)
+            {
+                while (true)
+                {
+                    Console.WriteLine
+                        (
+                            "Оформить заказ - 1\n" +
+                            "Посмотреть историю заказов - 2\n" +
+                            "Главное меню - 0\n"
+                        );
+
+                    int commands = int.Parse(Console.ReadLine());
+
+                    switch (commands)
+                    {
+                        case 1:
+                            {
+                                service.CreateOrder(foundAccount);
+                            }
+                            break;
+                        case 2:
+                            {
+                                service.ShowMyOrders(customerId);
+                            }
+                            break;
+                        case 0:
+                            {
+                                return;
+                            }
+                    }
+                }
+            }
+        }
+        public void CourierMenu (DeliveryService service)
+        {
+            while (true)
+            {
+                Console.WriteLine("Введите ID для входа");
+                int courierId = ReadId();
+                var foundCourier = FindCourier(courierId);
+
+                if (foundCourier != null)
+                {
+                    Console.WriteLine($"Здравствуй!{foundCourier.Name}\n");
+
+                    Console.WriteLine
+                        (
+                            "Посмотреть заказы - 1\n" +
+                            "Принять заказ - 2\n" 
+                        );
+
+                    int commands = int.Parse(Console.ReadLine());
+
+                    switch (commands)
+                    {
+
+                    }
+                }
+
+
+            }
+        }
         private int orderId = 1000;
         public void CreateCustomer ()
         {
@@ -31,6 +99,27 @@ namespace DeliverySystem.Models
 
             Console.WriteLine("Аккаунт создан");
         }
+        public Customer FindAccount (int id)
+        {
+            var foundCustomer = customers.FirstOrDefault(customer => customer.Id == id);
+
+            if (foundCustomer != null)
+            {
+                Console.WriteLine($"Добро пожаловать {foundCustomer.Name}");
+            }
+
+            return foundCustomer;   
+        }
+        public Courier FindCourier (int id)
+        {
+            return couriers.FirstOrDefault(courier => courier.Id == id);
+        }
+        public int ReadId ()
+        {
+            //Console.WriteLine("Введите ID");
+            int id = int.Parse(Console.ReadLine());
+            return id;
+        }
         public void ShowAllCustomers()
         {
             foreach (var customer in customers)
@@ -38,38 +127,61 @@ namespace DeliverySystem.Models
                 Console.WriteLine(customer);
             }
         }
-        public void CreateOrder ()
+        public void CreateOrder (Customer customer)
         {
             Order order = new ()
             {
                 OrderId = orderId++,
                 CreateDate = DateTime.Now,
                 OrderStatus = OrderStatus.Created,
+                CustomerId = customer.Id,
 
             };
 
-            Console.WriteLine("Что хотите заказать?");
-
-            Product product = new ()
+            while (true)
             {
-                ProductName = Console.ReadLine()
-            };
 
-            Console.WriteLine("Выберите кол-во");
+                Console.WriteLine("Что хотите заказать?");
 
-            OrderItem orderItem = new ()
-            {
-                Product = product,
-                Quantity = int.Parse(Console.ReadLine())
-            };
+                Product product = new ()
+                {
+                    ProductName = Console.ReadLine()
+                };
 
-            order.OrderItems.Add(orderItem);
+                Console.WriteLine("Выберите кол-во");
 
-            orders.Add(order);
+                OrderItem orderItem = new ()
+                {
+                    Product = product,
+                    Quantity = int.Parse(Console.ReadLine())
+                };
+
+                order.OrderItems.Add(orderItem);
+
+                //orders.Add(order);
+
+                Console.WriteLine("Оформить заказ или продолжить?");
+
+                int continutOrNot = int.Parse(Console.ReadLine());
+
+                switch (continutOrNot)
+                {
+                    case 0:
+                            orders.Add(order);
+                            return;
+                        
+                    case 1:
+                        
+                            continue;
+                        
+                }
+            }
         }
-        public void ShowOrders ()
+        public void ShowMyOrders (int id)
         {
-            foreach (var order in orders)
+            var foundOrders = orders.Where(order => order.CustomerId == id).ToList();
+
+            foreach (var order in foundOrders)
             {
                 Console.WriteLine(order);
             }
