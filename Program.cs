@@ -23,104 +23,20 @@ while (true)
     {
         case 1:
             {
-                Console.WriteLine
-                (
-                    "Cоздать аккаунт - 1\n" +
-                    "Оформить заказ - 2\n" +
-                    "Посмотреть историю заказов - 3\n"
-                );
-
-                int command = int.Parse(Console.ReadLine());
-                
-                switch(command)
-                {
-                    case 1:
-                        {
-                            service.CreateCustomer();
-                        }
-                    break;
-                    case 2:
-                        {
-                            service.CreateOrder();
-                        }
-                    break;
-                    case 3:
-                        {
-                            service.ShowOrders();
-                        }
-                    break;
-                }
+                service.CustomerMenu();
             }
         break;
 
         case 2:
             {
-                Console.WriteLine
-                (
-                    "Cоздать аккаунт - 1\n" +
-                    "Посмотреть заказы - 2\n" +
-                    "Принять заказ - 3"
-                );
-
-                int command = int.Parse(Console.ReadLine());
-
-                switch (command)
-                {
-                    case 1:
-                        {
-                            service.CreateCourier();
-                        }
-                    break;
-
-                    case 2:
-                        {
-                            var noCourierOrders = service.GetNoCourierOrder(service);
-                            service.ShowNoCourierOrders(noCourierOrders);
-                        }
-                    break;
-                    case 3:
-                        {
-                            Console.WriteLine("Выберите заказ");
-                            int orderId = int.Parse(Console.ReadLine());
-                            Console.WriteLine("Введите Id");
-                            int courierId = int.Parse(Console.ReadLine());
-                            service.AcceptOrder(orderId, courierId);
-                        }
-                    break;
-                }
+                service.CourierMenu(); 
             }
         break;
 
         case 3:
             {
-                while (true)
-                {
-                    Console.WriteLine
-                    (
-                        "Выберите команду:\n" +
-                        "Посмотреть всех клиентов - 1\n" +
-                        "Посмотреть всех курьеров - 2\n"
-                    );
-
-                    int command = int.Parse(Console.ReadLine());
-
-                    switch(command)
-                    {
-                        case 1:
-                            {
-                                service.ShowAllCustomers();
-                            }
-                        break;
-
-                        case 2:
-                            {
-                                service.ShowAllCouriers();
-                            }
-                        break;
-                    }
-
-                    break;
-                }
+                service.AdminMenu();
+            
             }
         break;
 
