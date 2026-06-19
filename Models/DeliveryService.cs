@@ -65,8 +65,9 @@ namespace DeliverySystem.Models
                 {
                     Console.WriteLine
                     (
-                        "Посмотреть заказы - 1\n" +
+                        "Посмотреть свободные заказы - 1\n" +
                         "Принять заказ - 2\n" + 
+                        "Посмотреть мои заказы - 3\n" +
                         "Главное меню - 0"
                     );
 
@@ -84,6 +85,18 @@ namespace DeliverySystem.Models
                                 Console.WriteLine("Введите ID заказа");
                                 int orderId = int.Parse(Console.ReadLine());
                                 AcceptOrder(orderId, foundCourier.Id);
+                            }
+                        break;
+                        case 3:
+                            {
+                                ShowCourierOrders(foundCourier.Id);
+                            }
+                        break;
+                        case 4:
+                            {
+                                Console.WriteLine("Введите ID заказа, чтобы отметить как доставленный");
+                                int orderId = int.Parse(Console.ReadLine());
+                                DeliverOrder(orderId);
                             }
                         break;
                         case 0:
@@ -258,7 +271,6 @@ namespace DeliverySystem.Models
                 Console.WriteLine(order);
             }
         }
-
         public void CreateCourier()
         {
             Console.WriteLine("Введите имя");
@@ -282,13 +294,27 @@ namespace DeliverySystem.Models
                 Console.WriteLine(courier);
             }
         }
-
         public void AcceptOrder(int orderId, int courierId)
         {
             var pickedOrder = orders.First(order => order.OrderId == orderId);
             pickedOrder.CourierId = courierId;
             pickedOrder.OrderStatus = OrderStatus.Accepted;
             Console.WriteLine("Заказ принят");
+        }
+        public void ShowCourierOrders (int courierId)
+        {
+            var foundOrders = orders.Where(order => order.CourierId == courierId);
+
+            foreach (var order in foundOrders)
+            {
+                Console.WriteLine($"ID: {order.OrderId}, Статус: {order.OrderStatus}");
+            }
+        }
+        public void DeliverOrder(int orderId)
+        {
+            var pickedOrder = orders.First(order => order.OrderId == orderId);
+            pickedOrder.OrderStatus = OrderStatus.Delivered;
+            Console.WriteLine("Заказ доставлен");
         }
         
     }
