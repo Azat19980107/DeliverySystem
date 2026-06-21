@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
+using DeliverySystem.Data;
 
 namespace DeliverySystem.Models
 {
@@ -49,8 +50,15 @@ namespace DeliverySystem.Models
                             {
                                 return;
                             }
+                        default:
+                            {
+                                continue;
+                            }
                     }
                 }
+            }else
+            {
+                Console.WriteLine("Аккаунта с таким ID нет");
             }
         }
         public void CourierMenu ()
@@ -68,6 +76,7 @@ namespace DeliverySystem.Models
                         "Посмотреть свободные заказы - 1\n" +
                         "Принять заказ - 2\n" + 
                         "Посмотреть мои заказы - 3\n" +
+                        "Отметить как доставленный - 4\n" +
                         "Главное меню - 0"
                     );
 
@@ -96,7 +105,7 @@ namespace DeliverySystem.Models
                             {
                                 Console.WriteLine("Введите ID заказа, чтобы отметить как доставленный");
                                 int orderId = int.Parse(Console.ReadLine());
-                                DeliverOrder(orderId);
+                                DeliverOrder(orderId, foundCourier.Id);
                             }
                         break;
                         case 0:
@@ -172,17 +181,23 @@ namespace DeliverySystem.Models
             Console.WriteLine("Придумайте ID");
             int id = int.Parse(Console.ReadLine());
 
-            customers.Add(new Customer
+            using var context = new AppDbContext();
+            var customer = new Customer
             {
-                Id = id,
-                Name = name
-            });
+                Name = name,
+                Id = id
+            };
+
+            context.Customers.Add(customer);
+            context.SaveChanges();
 
             Console.WriteLine("Аккаунт создан");
         }
         public Customer FindAccount (int id)
         {
-            var foundCustomer = customers.FirstOrDefault(customer => customer.Id == id);
+            using var context = new AppDbContext();
+
+            var foundCustomer = context.Customers.FirstOrDefault(customer =>  customer.Id == id);
 
             if (foundCustomer != null)
             {
@@ -203,6 +218,8 @@ namespace DeliverySystem.Models
         }
         public void ShowAllCustomers()
         {
+            using var context = new AppDbContext();
+            var customers = context.Customers.ToList();
             foreach (var customer in customers)
             {
                 Console.WriteLine(customer);
@@ -258,6 +275,9 @@ namespace DeliverySystem.Models
                     case 1:
                         
                             continue;
+                    default:
+
+                            continue;
                         
                 }
             }
@@ -297,9 +317,16 @@ namespace DeliverySystem.Models
         public void AcceptOrder(int orderId, int courierId)
         {
             var pickedOrder = orders.First(order => order.OrderId == orderId);
-            pickedOrder.CourierId = courierId;
-            pickedOrder.OrderStatus = OrderStatus.Accepted;
-            Console.WriteLine("Заказ принят");
+
+            if (pickedOrder.CourierId == 0)
+            {
+                pickedOrder.CourierId = courierId;
+                pickedOrder.OrderStatus = OrderStatus.Accepted;
+                Console.WriteLine("Заказ принят");
+            }else
+            {
+                Console.WriteLine("Заказ у другого курьера");
+            }
         }
         public void ShowCourierOrders (int courierId)
         {
@@ -310,11 +337,18 @@ namespace DeliverySystem.Models
                 Console.WriteLine($"ID: {order.OrderId}, Статус: {order.OrderStatus}");
             }
         }
-        public void DeliverOrder(int orderId)
+        public void DeliverOrder(int orderId, int courierId)
         {
-            var pickedOrder = orders.First(order => order.OrderId == orderId);
-            pickedOrder.OrderStatus = OrderStatus.Delivered;
-            Console.WriteLine("Заказ доставлен");
+            var pickedOrder = orders.FirstOrDefault(order => order.OrderId == orderId && order.CourierId == courierId);
+
+            if(pickedOrder != null)
+            {
+                pickedOrder.OrderStatus = OrderStatus.Delivered;
+                Console.WriteLine("Заказ доставлен");
+            }else
+            {
+                Console.WriteLine("Заказ не ваш");
+            }
         }
         
     }

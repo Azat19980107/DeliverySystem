@@ -1,11 +1,14 @@
-﻿using System.Buffers;
+﻿using DeliverySystem.Data;
+using DeliverySystem.Models;
+using System.Buffers;
 using System.Diagnostics;
 using System.Runtime;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
-using DeliverySystem.Models;
 
 DeliveryService service = new DeliveryService ();
+using var context = new AppDbContext();
+context.Database.EnsureCreated();
 
 while (true)
 {

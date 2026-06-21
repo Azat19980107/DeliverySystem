@@ -17,6 +17,8 @@ public class Order
             $"ID заказа: {OrderId}\n" +
             $"Дата создания: {CreateDate}\n" +
             $"Статус заказа: {OrderStatus}\n" +
+            $"ID курьера: {CourierId}\n" +
+            $"ID клиента: {CustomerId}" +
             $"Продукты:\n"
         ;
 
@@ -24,10 +26,6 @@ public class Order
         {
             result += product + "\n";
         }
-
-        result += $"ID курьера: {CourierId}\n" +
-                  $"ID клиента: {CustomerId}"
-        ;
 
         return result;
     }
