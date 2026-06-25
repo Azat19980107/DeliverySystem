@@ -299,16 +299,22 @@ namespace DeliverySystem.Models
             Console.WriteLine("Придумайте ID");
             int id = int.Parse(Console.ReadLine());
 
-            couriers.Add(new Courier
+            using var context = new AppDbContext();
+            var courier = new Courier
             {
-                Name = name,
-                Id = id
-            });
+                Id = id,
+                Name = name
+            };
+
+            context.Couriers.Add(courier);
+            context.SaveChanges();
 
             Console.WriteLine("Аккаунт создан");
         }
         public void ShowAllCouriers ()
         {
+            using var context = new AppDbContext();
+            var couriers = context.Couriers.ToList();
             foreach (var courier in couriers)
             {
                 Console.WriteLine(courier);

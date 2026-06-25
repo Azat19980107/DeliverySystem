@@ -7,7 +7,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
 DeliveryService service = new DeliveryService ();
+
 using var context = new AppDbContext();
+
 context.Database.EnsureCreated();
 
 while (true)
