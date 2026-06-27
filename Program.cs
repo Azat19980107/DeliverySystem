@@ -1,5 +1,6 @@
 ﻿using DeliverySystem.Data;
 using DeliverySystem.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Buffers;
 using System.Diagnostics;
 using System.Runtime;
@@ -9,7 +10,7 @@ using System.Xml;
 DeliveryService service = new DeliveryService ();
 
 using var context = new AppDbContext();
-
+context.Database.EnsureDeleted();
 context.Database.EnsureCreated();
 
 while (true)

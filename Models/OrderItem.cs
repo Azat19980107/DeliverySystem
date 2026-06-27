@@ -8,13 +8,15 @@ namespace DeliverySystem.Models
 {
     public class OrderItem
     {
-        public Product Product { get; set; }
+        public int Id { get; set; }
+        public string ProductName { get; set; }
         public int Quantity { get; set; }
-
+        public int OrderId { get; set; }
+        public Order Order { get; set; }
         public override string ToString()
         {
             return
-                $"{Product.ProductName} x{Quantity}"; 
+                $"{ProductName} x{Quantity}"; 
         }
     }
 }

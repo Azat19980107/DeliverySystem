@@ -7,14 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using DeliverySystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeliverySystem.Models
 {
     public class DeliveryService
     {
-        List<Customer> customers = new ();
-        List<Courier> couriers = new ();
-        List<Order> orders = new();
         public void CustomerMenu ()
         {
             Console.WriteLine("Для входа введите ID");
@@ -163,16 +161,17 @@ namespace DeliverySystem.Models
                     }
             }
         }
-        public void ShowNoCourierOrders ()
+        public void ShowNoCourierOrders()
         {
-            var noCourierOrders = orders.Where(order => order.CourierId == 0);
-            
-            foreach (var order in noCourierOrders)
+            using var context = new AppDbContext();
+
+            var foundOrders = context.Orders.Where(order => order.OrderStatus == OrderStatus.Created);
+
+            foreach (var order in foundOrders)
             {
-                Console.WriteLine(order.OrderId);
+                Console.WriteLine($"Заказ: №{order.Id}");
             }
         }
-        private int orderId = 1000;
         public void CreateCustomer ()
         {
             Console.WriteLine("Введите имя");
@@ -208,13 +207,28 @@ namespace DeliverySystem.Models
         }
         public Courier FindCourier (int id)
         {
-            return couriers.FirstOrDefault(courier => courier.Id == id);
+            using  var context = new AppDbContext ();
+            var foundCourier = context.Couriers.FirstOrDefault(courier =>  courier.Id == id);
+
+            if (foundCourier != null)
+            {
+                Console.WriteLine($"Здравствуй, {foundCourier.Name}");
+                return foundCourier;
+            }
+
+            return null;
         }
         public int ReadId ()
         {
-            //Console.WriteLine("Введите ID");
-            int id = int.Parse(Console.ReadLine());
-            return id;
+           while (true)
+            {
+                if(int.TryParse(Console.ReadLine(), out int id))
+                {
+                    return id;
+                }
+
+                Console.WriteLine("ID должен быть числом");
+            }
         }
         public void ShowAllCustomers()
         {
@@ -227,36 +241,30 @@ namespace DeliverySystem.Models
         }
         public void CreateOrder (Customer customer)
         {
-            Order order = new ()
+            using var context = new AppDbContext();
+
+            var order = new Order()
             {
-                OrderId = orderId++,
-                CreateDate = DateTime.Now,
-                OrderStatus = OrderStatus.Created,
-                CustomerId = customer.Id,
+ 
+               CreateDate = DateTime.Now,
+               OrderStatus = OrderStatus.Created,
+               CustomerId = customer.Id,
 
             };
 
             while (true)
             {
+                OrderItem orderItem = new();
 
                 Console.WriteLine("Что хотите заказать?");
 
-                Product product = new ()
-                {
-                    ProductName = Console.ReadLine()
-                };
+                orderItem.ProductName = Console.ReadLine();
 
                 Console.WriteLine("Выберите кол-во");
 
-                OrderItem orderItem = new ()
-                {
-                    Product = product,
-                    Quantity = int.Parse(Console.ReadLine())
-                };
+                orderItem.Quantity = int.Parse(Console.ReadLine());
 
                 order.OrderItems.Add(orderItem);
-
-                //orders.Add(order);
 
                 Console.WriteLine
                 (
@@ -269,24 +277,31 @@ namespace DeliverySystem.Models
                 switch (continutOrNot)
                 {
                     case 0:
-                            orders.Add(order);
-                            return;
-                        
+                        context.Orders.Add(order);
+                        context.SaveChanges();
+                        Console.WriteLine("Заказ оформлен!");
+                        return;
+
                     case 1:
-                        
-                            continue;
+
+                        continue;
                     default:
 
-                            continue;
-                        
+                        continue;
+
                 }
             }
         }
         public void ShowMyOrders (int id)
         {
-            var foundOrders = orders.Where(order => order.CustomerId == id).ToList();
+            using var context = new AppDbContext();
 
-            foreach (var order in foundOrders)
+            var orders = context.Orders
+                .Include(order => order.OrderItems)
+                .Where(order => order.CustomerId ==  id)
+                .ToList();
+
+            foreach(var order in orders)
             {
                 Console.WriteLine(order);
             }
@@ -322,34 +337,43 @@ namespace DeliverySystem.Models
         }
         public void AcceptOrder(int orderId, int courierId)
         {
-            var pickedOrder = orders.First(order => order.OrderId == orderId);
+            using var context = new AppDbContext();
 
-            if (pickedOrder.CourierId == 0)
+            var pickedOrder = context.Orders.FirstOrDefault(order => order.Id == orderId);
+
+            if (pickedOrder.CourierId == null)
             {
                 pickedOrder.CourierId = courierId;
                 pickedOrder.OrderStatus = OrderStatus.Accepted;
+                context.SaveChanges ();
                 Console.WriteLine("Заказ принят");
-            }else
+            }
+            else
             {
                 Console.WriteLine("Заказ у другого курьера");
             }
         }
         public void ShowCourierOrders (int courierId)
         {
-            var foundOrders = orders.Where(order => order.CourierId == courierId);
+            using var context = new AppDbContext();
+
+            var foundOrders = context.Orders.Where(order => order.CourierId == courierId).ToList();
 
             foreach (var order in foundOrders)
             {
-                Console.WriteLine($"ID: {order.OrderId}, Статус: {order.OrderStatus}");
+                Console.WriteLine($"ID: {order.Id}, Статус: {order.OrderStatus}");
             }
         }
         public void DeliverOrder(int orderId, int courierId)
         {
-            var pickedOrder = orders.FirstOrDefault(order => order.OrderId == orderId && order.CourierId == courierId);
+            using var context = new AppDbContext();
+         
+            var pickedOrder = context.Orders.FirstOrDefault(order => order.Id == orderId && order.CourierId == courierId);
 
             if(pickedOrder != null)
             {
                 pickedOrder.OrderStatus = OrderStatus.Delivered;
+                context.SaveChanges ();
                 Console.WriteLine("Заказ доставлен");
             }else
             {
