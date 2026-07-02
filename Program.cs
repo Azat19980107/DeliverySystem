@@ -10,7 +10,7 @@ using System.Xml;
 DeliveryService service = new DeliveryService ();
 
 using var context = new AppDbContext();
-context.Database.EnsureDeleted();
+//context.Database.EnsureDeleted();
 context.Database.EnsureCreated();
 
 while (true)

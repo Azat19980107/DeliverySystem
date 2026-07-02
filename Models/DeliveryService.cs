@@ -175,7 +175,7 @@ namespace DeliverySystem.Models
         public void CreateCustomer ()
         {
             Console.WriteLine("Введите имя");
-            string name = Console.ReadLine ();
+            string name = ReadName();
 
             Console.WriteLine("Придумайте ID");
             int id = int.Parse(Console.ReadLine());
@@ -262,7 +262,7 @@ namespace DeliverySystem.Models
 
                 Console.WriteLine("Выберите кол-во");
 
-                orderItem.Quantity = int.Parse(Console.ReadLine());
+                orderItem.Quantity = ReadQuantity();
 
                 order.OrderItems.Add(orderItem);
 
@@ -285,10 +285,6 @@ namespace DeliverySystem.Models
                     case 1:
 
                         continue;
-                    default:
-
-                        continue;
-
                 }
             }
         }
@@ -309,7 +305,7 @@ namespace DeliverySystem.Models
         public void CreateCourier()
         {
             Console.WriteLine("Введите имя");
-            string name = Console.ReadLine();
+            string name = ReadName();
 
             Console.WriteLine("Придумайте ID");
             int id = int.Parse(Console.ReadLine());
@@ -380,7 +376,59 @@ namespace DeliverySystem.Models
                 Console.WriteLine("Заказ не ваш");
             }
         }
-        
+        public int ReadQuantity()
+        {
+            while (true)
+            {
+                if(int.TryParse(Console.ReadLine(), out int result) != true)
+                {
+                    Console.WriteLine("Введите число!\n");
+                    continue;
+                }
+                else
+                {
+                    return result;
+                } 
+            }
+        }
+        public string ReadName ()
+        {
+            while (true)
+            {
+                string name = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    Console.WriteLine("Имя не может быть пустым");
+                    continue;
+                }
+
+                name = name.Trim();
+
+                if(char.IsLower(name[0]))
+                {
+                    name = char.ToUpper(name[0]) + name.Substring(1);
+                }
+
+                bool onlyLetters = true;
+
+                foreach (char c in name)
+                {
+                    if (!char.IsLetter(c))
+                    {
+                    onlyLetters = false;
+                    Console.WriteLine("Строка не должна содержать цифры или другие символы");
+                    break;
+                    }
+                }
+                if (!onlyLetters)
+                {
+                    continue;
+                }
+
+                return name;
+            }
+        }
     }
 }
         
